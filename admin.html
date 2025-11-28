@@ -20,6 +20,8 @@
         max-width: 1400px;
         margin: 0 auto;
       }
+
+      /* Login */
       #loginScreen .card {
         background: white;
         padding: 50px 30px;
@@ -49,17 +51,45 @@
         cursor: pointer;
       }
 
+      /* Filters */
+      .filters {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        margin: 20px 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+      }
+      .filters select,
+      .filters input {
+        padding: 12px;
+        border-radius: 10px;
+        border: 2px solid #e2e8f0;
+        font-size: 15px;
+      }
+      .filters button {
+        padding: 12px 20px;
+        background: #1a4971;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .filters .reset-btn {
+        background: #e74c3c;
+      }
+
+      /* Dashboard */
       .dashboard-header {
         text-align: center;
-        margin: 40px 0;
-      }
-      .dashboard-header h1 {
-        color: #1a4971;
-        font-size: 32px;
+        margin: 30px 0;
       }
       .actions {
         text-align: center;
-        margin: 30px 0;
+        margin: 20px 0;
         display: flex;
         gap: 15px;
         flex-wrap: wrap;
@@ -95,11 +125,6 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         text-align: center;
       }
-      .chart-card h3 {
-        color: #1a4971;
-        margin-bottom: 15px;
-        font-size: 18px;
-      }
 
       .table-container {
         overflow-x: auto;
@@ -129,23 +154,10 @@
       tr:hover {
         background: #f0f7ff;
       }
-
-      @media (max-width: 768px) {
-        .dashboard-header h1 {
-          font-size: 26px;
-        }
-        .actions {
-          flex-direction: column;
-          align-items: center;
-        }
-        .btn {
-          width: 90%;
-        }
-      }
     </style>
   </head>
   <body>
-    <!-- ÉCRAN DE CONNEXION -->
+    <!-- Login -->
     <div id="loginScreen">
       <div class="card">
         <h2 style="color: #1a4971">Connexion Admin</h2>
@@ -156,7 +168,6 @@
           placeholder="Email"
         />
         <input type="password" id="password" placeholder="Mot de passe" />
-        <!-- ON UTILISE addEventListener → PLUS D'ERREUR ! -->
         <button id="loginBtn">Se connecter</button>
         <p id="error" style="color: #e74c3c; margin-top: 15px; display: none">
           Identifiants incorrects
@@ -164,11 +175,30 @@
       </div>
     </div>
 
-    <!-- TABLEAU DE BORD -->
+    <!-- Dashboard -->
     <div id="dashboard" style="display: none">
       <div class="dashboard-header">
         <h1>Résultats Visites Qualité</h1>
-        <p><strong id="totalCount">0</strong> réponse(s) enregistrée(s)</p>
+        <p><strong id="totalCount">0</strong> réponse(s)</p>
+      </div>
+
+      <!-- FILTRES -->
+      <div class="filters">
+        <select id="filterSite">
+          <option value="">Tous les sites</option>
+          <option value="WKWUT">WKWUT</option>
+          <option value="WKWFR">WKWFR</option>
+        </select>
+        <input
+          type="text"
+          id="filterVisitor"
+          placeholder="Filtrer par visiteur..."
+        />
+        <input type="date" id="filterDate" />
+        <button onclick="applyFilters()">Appliquer</button>
+        <button class="reset-btn" onclick="resetFilters()">
+          Réinitialiser
+        </button>
       </div>
 
       <div class="actions">
@@ -180,31 +210,31 @@
 
       <div class="charts-grid">
         <div class="chart-card">
-          <h3>Q1 – Accueil & Préparation</h3>
+          <h3>Q1 – Accueil</h3>
           <canvas id="chartQ1"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q2 – Attentes remplies</h3>
+          <h3>Q2 – Attentes</h3>
           <canvas id="chartQ2"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q3 – Maîtrise système qualité</h3>
+          <h3>Q3 – Maîtrise QS</h3>
           <canvas id="chartQ3"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q4 – Clarté des KPIs</h3>
+          <h3>Q4 – KPIs</h3>
           <canvas id="chartQ4"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q5 – Maturité Lean/5S</h3>
+          <h3>Q5 – Lean/5S</h3>
           <canvas id="chartQ5"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q6 – État des lignes</h3>
+          <h3>Q6 – Lignes</h3>
           <canvas id="chartQ6"></canvas>
         </div>
         <div class="chart-card">
-          <h3>Q7 – Discipline qualité</h3>
+          <h3>Q7 – Discipline</h3>
           <canvas id="chartQ7"></canvas>
         </div>
       </div>
@@ -214,9 +244,7 @@
       </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
       const SUPABASE_URL = "https://xodkwwxfpbgatkezbsiq.supabase.co";
       const SUPABASE_ANON_KEY =
@@ -227,6 +255,7 @@
       );
 
       let allResponses = [];
+      let filteredResponses = [];
 
       const categories = {
         positive: [
@@ -249,7 +278,6 @@
         ],
       };
 
-      // ON ATTACHE LE BOUTON APRÈS LE CHARGEMENT
       document.getElementById("loginBtn").addEventListener("click", login);
 
       async function login() {
@@ -272,9 +300,41 @@
           .select("*")
           .order("created_at", { ascending: false });
         allResponses = data || [];
-        document.getElementById("totalCount").textContent = allResponses.length;
+        filteredResponses = allResponses;
+        updateView();
+      }
+
+      function applyFilters() {
+        const site = document.getElementById("filterSite").value;
+        const visitor = document
+          .getElementById("filterVisitor")
+          .value.toLowerCase();
+        const date = document.getElementById("filterDate").value;
+
+        filteredResponses = allResponses.filter((r) => {
+          if (site && r.site !== site) return false;
+          if (visitor && !r.visitor?.toLowerCase().includes(visitor))
+            return false;
+          if (date && r.visit_date !== date) return false;
+          return true;
+        });
+
+        updateView();
+      }
+
+      function resetFilters() {
+        document.getElementById("filterSite").value = "";
+        document.getElementById("filterVisitor").value = "";
+        document.getElementById("filterDate").value = "";
+        filteredResponses = allResponses;
+        updateView();
+      }
+
+      function updateView() {
+        document.getElementById("totalCount").textContent =
+          filteredResponses.length;
         updateCharts();
-        updateTable(allResponses);
+        updateTable();
       }
 
       function countResponses(q) {
@@ -283,9 +343,9 @@
           good: 0,
           medium: 0,
           negative: 0,
-          total: allResponses.length,
+          total: filteredResponses.length,
         };
-        allResponses.forEach((r) => {
+        filteredResponses.forEach((r) => {
           const ans = r[q];
           if (!ans) return;
           if (categories.positive.some((v) => ans.includes(v)))
@@ -293,8 +353,7 @@
           else if (categories.good.some((v) => ans.includes(v))) counts.good++;
           else if (categories.medium.some((v) => ans.includes(v)))
             counts.medium++;
-          else if (categories.negative.some((v) => ans.includes(v)))
-            counts.negative++;
+          else counts.negative++;
         });
         return counts;
       }
@@ -307,7 +366,8 @@
         qs.forEach((q) => {
           const c = countResponses(q);
           const data = [c.positive, c.good, c.medium, c.negative];
-
+          const chart = Chart.getChart(`chart${q.toUpperCase()}`);
+          if (chart) chart.destroy();
           new Chart(document.getElementById(`chart${q.toUpperCase()}`), {
             type: "doughnut",
             data: {
@@ -323,28 +383,18 @@
             },
             options: {
               responsive: true,
-              plugins: {
-                legend: { position: "bottom", labels: { padding: 20 } },
-                tooltip: {
-                  callbacks: {
-                    label: (ctx) =>
-                      `${ctx.label}: ${ctx.raw} (${Math.round(
-                        (ctx.raw / c.total) * 100
-                      )}%)`,
-                  },
-                },
-              },
+              plugins: { legend: { position: "bottom" } },
             },
           });
         });
       }
 
-      function updateTable(data) {
+      function updateTable() {
         let html = `<table>
-        <tr><th>Date</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th>
+        <tr><th>Date</th><th>Site</th><th>Visiteur</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th>
             <th>Points forts</th><th>Améliorations</th><th>Priorités</th><th>Commentaires</th></tr>`;
 
-        data.forEach((r) => {
+        filteredResponses.forEach((r) => {
           const prio =
             [r.priority1, r.priority2, r.priority3]
               .filter(Boolean)
@@ -353,12 +403,14 @@
           <td><strong>${new Date(r.visit_date).toLocaleDateString(
             "fr-FR"
           )}</strong></td>
+          <td>${r.site || "-"}</td>
+          <td>${r.visitor || "-"}</td>
           <td>${r.q1 || "-"}</td><td>${r.q2 || "-"}</td><td>${
             r.q3 || "-"
           }</td><td>${r.q4 || "-"}</td>
           <td>${r.q5 || "-"}</td><td>${r.q6 || "-"}</td><td>${r.q7 || "-"}</td>
-          <td>${(r.strengths || "").substring(0, 50)}...</td>
-          <td>${(r.improvements || "").substring(0, 50)}...</td>
+          <td>${(r.strengths || "").substring(0, 40)}...</td>
+          <td>${(r.improvements || "").substring(0, 40)}...</td>
           <td>${prio}</td><td>${r.comments || "-"}</td>
         </tr>`;
         });
@@ -367,11 +419,13 @@
 
       function exportToExcel() {
         let csv =
-          "\uFEFFDate,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Points forts,Améliorations,Priorité 1,Priorité 2,Priorité 3,Commentaires\n";
-        allResponses.forEach((r) => {
+          "\uFEFFDate,Site,Visiteur,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Points forts,Améliorations,Priorité 1,Priorité 2,Priorité 3,Commentaires\n";
+        filteredResponses.forEach((r) => {
           csv +=
             [
               new Date(r.visit_date).toLocaleDateString("fr-FR"),
+              r.site || "",
+              r.visitor || "",
               r.q1 || "",
               r.q2 || "",
               r.q3 || "",
@@ -393,7 +447,7 @@
         link.href = URL.createObjectURL(
           new Blob([csv], { type: "text/csv;charset=utf-8;" })
         );
-        link.download = `WKW_Qualite_${new Date()
+        link.download = `WKW_Qualite_Filtre_${new Date()
           .toISOString()
           .slice(0, 10)}.csv`;
         link.click();
