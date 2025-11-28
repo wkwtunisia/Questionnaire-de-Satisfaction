@@ -4,124 +4,421 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>WKW Quality Survey</title>
-    <link rel="stylesheet" href="styles.css" />
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap"
       rel="stylesheet"
     />
+    <style>
+      :root {
+        --primary: #1a4971;
+        --green: #00a651;
+        --gray: #f8f9fa;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: "Roboto", sans-serif;
+        background: var(--gray);
+        color: #222;
+        min-height: 100vh;
+      }
+
+      /* LANGUAGE SWITCH */
+      .lang-switch {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        gap: 12px;
+      }
+      .lang-btn {
+        padding: 10px 18px;
+        background: white;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        border-radius: 50px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+      }
+      .lang-btn.active,
+      .lang-btn:hover {
+        background: var(--primary);
+        color: white;
+        transform: scale(1.05);
+      }
+
+      /* SIDEBAR */
+      #sidebarToggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 9999;
+        background: var(--primary);
+        color: white;
+        border: none;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        font-size: 30px;
+        cursor: pointer;
+        box-shadow: 0 10px 35px rgba(26, 73, 113, 0.5);
+      }
+      #sidebar {
+        position: fixed;
+        left: -340px;
+        top: 0;
+        width: 340px;
+        height: 100%;
+        background: var(--primary);
+        color: white;
+        transition: left 0.45s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        z-index: 9998;
+        padding: 110px 35px 35px;
+      }
+      #sidebar.open {
+        left: 0;
+      }
+      #sidebar .logo {
+        font-size: 32px;
+        font-weight: 900;
+        text-align: center;
+        margin-bottom: 70px;
+      }
+      #sidebar a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        padding: 20px;
+        border-radius: 14px;
+        margin: 15px 0;
+        font-size: 20px;
+        background: rgba(255, 255, 255, 0.12);
+        transition: 0.3s;
+      }
+      #sidebar a:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateX(10px);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 40px auto;
+        background: white;
+        border-radius: 28px;
+        padding: 60px;
+        box-shadow: 0 30px 90px rgba(0, 0, 0, 0.18);
+        position: relative;
+      }
+      .wkw-logo {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      .wkw-logo img {
+        height: 110px;
+      }
+
+      h1 {
+        text-align: center;
+        color: var(--primary);
+        font-size: 36px;
+        margin-bottom: 50px;
+        font-weight: 900;
+      }
+
+      .header-info {
+        background: #eef5ff;
+        padding: 35px;
+        border-radius: 20px;
+        margin-bottom: 60px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+      }
+      .header-info label {
+        display: block;
+        font-weight: bold;
+        color: var(--primary);
+        margin-bottom: 12px;
+        font-size: 19px;
+      }
+      .header-info input,
+      .header-info select {
+        width: 100%;
+        padding: 18px;
+        border: 2px solid var(--primary);
+        border-radius: 14px;
+        font-size: 18px;
+      }
+
+      .section h2 {
+        color: var(--primary);
+        font-size: 28px;
+        border-bottom: 5px solid var(--primary);
+        padding-bottom: 14px;
+        margin: 70px 0 40px;
+      }
+      .question p {
+        font-weight: 600;
+        font-size: 19px;
+        margin-bottom: 20px;
+      }
+      .options {
+        display: grid;
+        gap: 20px;
+        margin-left: 15px;
+      }
+      .options label {
+        display: flex;
+        align-items: center;
+        font-size: 18.5px;
+        cursor: pointer;
+      }
+      .options input[type="radio"] {
+        width: 28px;
+        height: 28px;
+        margin-right: 20px;
+        accent-color: var(--primary);
+      }
+
+      textarea,
+      .priority {
+        width: 100%;
+        padding: 20px;
+        border: 2px solid #ddd;
+        border-radius: 16px;
+        font-size: 18px;
+        margin-top: 15px;
+        font-family: inherit;
+      }
+      .priority {
+        margin-bottom: 25px;
+      }
+
+      .submit-btn {
+        display: block;
+        width: 500px;
+        max-width: 95%;
+        margin: 90px auto;
+        padding: 28px;
+        background: var(--green);
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-size: 28px;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 18px 50px rgba(0, 166, 81, 0.5);
+        transition: 0.4s;
+      }
+      .submit-btn:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 30px 70px rgba(0, 166, 81, 0.6);
+      }
+
+      /* THANK YOU */
+      #thankYou {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 99999;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+      .thankyou-box {
+        background: white;
+        padding: 90px 110px;
+        border-radius: 50px;
+        text-align: center;
+        max-width: 750px;
+        box-shadow: 0 50px 150px rgba(0, 0, 0, 0.8);
+        animation: pop 1.2s ease-out;
+      }
+      .thankyou-box img {
+        height: 130px;
+        margin-bottom: 35px;
+      }
+      .thankyou-box h2 {
+        font-size: 52px;
+        color: var(--primary);
+        margin: 30px 0;
+      }
+      .thankyou-box p {
+        font-size: 24px;
+        line-height: 1.9;
+      }
+      .thankyou-box .close-btn {
+        margin-top: 60px;
+        padding: 20px 70px;
+        background: var(--green);
+        color: white;
+        border: none;
+        border-radius: 70px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+      @keyframes pop {
+        0% {
+          transform: scale(0.2);
+          opacity: 0;
+        }
+        65% {
+          transform: scale(1.12);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 30px;
+          margin: 20px;
+        }
+        .header-info {
+          grid-template-columns: 1fr;
+        }
+        #sidebar {
+          width: 100%;
+          left: -100%;
+        }
+      }
+    </style>
   </head>
   <body>
-    <!-- Language Buttons -->
-    <div class="language-switch">
+    <!-- LANGUAGE SWITCH -->
+    <div class="lang-switch">
       <button class="lang-btn active" data-lang="fr">FR</button>
       <button class="lang-btn" data-lang="en">EN</button>
       <button class="lang-btn" data-lang="de">DE</button>
     </div>
 
-    <!-- Sidebar Toggle Button (always visible) -->
-    <button id="sidebarToggle" class="sidebar-toggle-btn">Menu</button>
-
-    <!-- Sidebar -->
-    <div id="sidebar" class="sidebar closed">
+    <!-- SIDEBAR -->
+    <button id="sidebarToggle">Menu</button>
+    <div id="sidebar">
       <div class="logo">WKW Quality</div>
       <nav>
-        <ul>
-          <li><a href="admin.html" id="adminLink">Admin Dashboard</a></li>
-        </ul>
+        <a href="admin.html" id="adminLink">Admin Dashboard</a>
       </nav>
-      <div class="sidebar-footer">© 2025 WKWUT</div>
+      <div class="sidebar-footer">© 2025 WKW Automotive</div>
     </div>
 
-    <div class="main-content">
-      <div class="container">
-        <header>
-          <h1 id="title">Questionnaire de Satisfaction – Visite Qualité</h1>
-          <div class="info">
-            <p>
-              <strong id="visitorLabel">Visiteur :</strong>
-              <span id="vpName">Vice-Président Qualité Groupe</span>
+    <div class="container" id="formContainer">
+      <div class="wkw-logo">
+        <img
+          src="https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png"
+          alt="WKW"
+        />
+      </div>
+
+      <h1 id="title">
+        Questionnaire de Satisfaction – Visiteur interne Groupe
+      </h1>
+
+      <div class="header-info">
+        <div>
+          <label id="lblFunction">Fonction du visiteur</label>
+          <input
+            type="text"
+            id="visitorFunction"
+            required
+            placeholder="ex: VP Qualité Groupe"
+          />
+        </div>
+        <div>
+          <label id="lblSite">Site visité</label>
+          <select id="siteSelect" required>
+            <option value="WKWUT">WKWUT</option>
+            <option value="WKWFR">WKWFR</option>
+          </select>
+        </div>
+        <div>
+          <label id="lblDate">Date de la visite</label>
+          <input type="date" id="visitDate" required />
+        </div>
+      </div>
+
+      <form id="surveyForm">
+        <!-- TOUTES LES QUESTIONS 100% COMPLÈTES -->
+        <div class="section">
+          <h2 id="sec1">1. Impression générale de la visite</h2>
+          <div class="question">
+            <p id="q1">
+              1. Comment évaluez-vous l’accueil et la préparation générale de la
+              visite ?
             </p>
-            <p><strong>Site :</strong> WKWUT</p>
-            <p>
-              <strong id="dateLabel">Date :</strong>
-              <input type="date" id="visitDate" required />
-            </p>
+            <div class="options">
+              <label
+                ><input
+                  type="radio"
+                  name="q1"
+                  value="Très satisfaisant"
+                  required
+                /><span id="a1">Très satisfaisant</span></label
+              >
+              <label
+                ><input type="radio" name="q1" value="Satisfaisant" /><span
+                  id="a2"
+                  >Satisfaisant</span
+                ></label
+              >
+              <label
+                ><input type="radio" name="q1" value="À améliorer" /><span
+                  id="a3"
+                  >À améliorer</span
+                ></label
+              >
+              <label
+                ><input type="radio" name="q1" value="Insatisfaisant" /><span
+                  id="a4"
+                  >Insatisfaisant</span
+                ></label
+              >
+            </div>
           </div>
-        </header>
-
-        <form id="surveyForm">
-          <!-- All 7 questions – full and clean -->
-          <section class="section">
-            <h2 id="sec1">1. Impression générale de la visite</h2>
-            <div class="question">
-              <p id="q1">
-                1. Comment évaluez-vous l'accueil et la préparation générale de
-                la visite ?
-              </p>
-              <div class="options">
-                <label
-                  ><input
-                    type="radio"
-                    name="q1"
-                    value="Très satisfaisant"
-                    required
-                  /><span id="a1">Très satisfaisant</span></label
-                >
-                <label
-                  ><input type="radio" name="q1" value="Satisfaisant" /><span
-                    id="a2"
-                    >Satisfaisant</span
-                  ></label
-                >
-                <label
-                  ><input type="radio" name="q1" value="À améliorer" /><span
-                    id="a3"
-                    >À améliorer</span
-                  ></label
-                >
-                <label
-                  ><input type="radio" name="q1" value="Insatisfaisant" /><span
-                    id="a4"
-                    >Insatisfaisant</span
-                  ></label
-                >
-              </div>
+          <div class="question">
+            <p id="q2">2. La visite a-t-elle répondu à vos attentes ?</p>
+            <div class="options">
+              <label
+                ><input
+                  type="radio"
+                  name="q2"
+                  value="Oui totalement"
+                  required
+                /><span id="b1">Oui totalement</span></label
+              >
+              <label
+                ><input type="radio" name="q2" value="Partiellement" /><span
+                  id="b2"
+                  >Partiellement</span
+                ></label
+              >
+              <label
+                ><input type="radio" name="q2" value="Peu" /><span id="b3"
+                  >Peu</span
+                ></label
+              >
+              <label
+                ><input type="radio" name="q2" value="Pas du tout" /><span
+                  id="b4"
+                  >Pas du tout</span
+                ></label
+              >
             </div>
-            <div class="question">
-              <p id="q2">2. La visite a-t-elle répondu à vos attentes ?</p>
-              <div class="options">
-                <label
-                  ><input
-                    type="radio"
-                    name="q2"
-                    value="Oui totalement"
-                    required
-                  /><span id="b1">Oui totalement</span></label
-                >
-                <label
-                  ><input type="radio" name="q2" value="Partiellement" /><span
-                    id="b2"
-                    >Partiellement</span
-                  ></label
-                >
-                <label
-                  ><input type="radio" name="q2" value="Peu" /><span id="b3"
-                    >Peu</span
-                  ></label
-                >
-                <label
-                  ><input type="radio" name="q2" value="Pas du tout" /><span
-                    id="b4"
-                    >Pas du tout</span
-                  ></label
-                >
-              </div>
-            </div>
-          </section>
+          </div>
+        </div>
 
-          <!-- Questions 3–7 (shortened for space – all present) -->
-          <section class="section">
-            <h2 id="sec2">2. Qualité du système et de l'organisation</h2>
+        <div class="section">
+          <h2 id="sec2">2. Qualité du système et de l’organisation</h2>
+          <div class="question">
             <p id="q3">
               3. Évaluation du niveau de maîtrise du système qualité :
             </p>
@@ -151,8 +448,11 @@
                 ></label
               >
             </div>
+          </div>
+          <div class="question">
             <p id="q4">
-              4. Clarté et disponibilité des indicateurs de performance :
+              4. Clarté et disponibilité des indicateurs de performance
+              (Production, Qualité, Maintenance, Logistique…) :
             </p>
             <div class="options">
               <label
@@ -179,6 +479,8 @@
                 ></label
               >
             </div>
+          </div>
+          <div class="question">
             <p id="q5">
               5. Maturité des démarches Lean, 5S et amélioration continue :
             </p>
@@ -207,10 +509,12 @@
                 ></label
               >
             </div>
-          </section>
+          </div>
+        </div>
 
-          <section class="section">
-            <h2 id="sec3">3. Processus, terrain & conformité</h2>
+        <div class="section">
+          <h2 id="sec3">3. Processus, terrain & conformité</h2>
+          <div class="question">
             <p id="q6">
               6. État général des lignes de production et niveau de conformité :
             </p>
@@ -238,7 +542,12 @@
                 ></label
               >
             </div>
-            <p id="q7">7. Niveau de discipline qualité :</p>
+          </div>
+          <div class="question">
+            <p id="q7">
+              7. Niveau de discipline qualité (standard work, traçabilité,
+              audits, réaction aux défauts) :
+            </p>
             <div class="options">
               <label
                 ><input
@@ -265,62 +574,75 @@
                 ></label
               >
             </div>
-          </section>
+          </div>
+        </div>
 
-          <section class="section">
-            <h2 id="sec4">4. Points forts observés</h2>
-            <textarea
-              name="strengths"
-              rows="4"
-              required
-              placeholder="Merci d'indiquer les points positifs..."
-            ></textarea>
-          </section>
-          <section class="section">
-            <h2 id="sec5">5. Axes d'amélioration</h2>
-            <textarea
-              name="improvements"
-              rows="4"
-              required
-              placeholder="Quels sont les points à améliorer ?"
-            ></textarea>
-          </section>
-          <section class="section">
-            <h2 id="sec6">6. Priorités recommandées (max 3)</h2>
-            <input
-              type="text"
-              name="priority1"
-              class="priority"
-              placeholder="1."
-            /><br /><br />
-            <input
-              type="text"
-              name="priority2"
-              class="priority"
-              placeholder="2."
-            /><br /><br />
-            <input
-              type="text"
-              name="priority3"
-              class="priority"
-              placeholder="3."
-            />
-          </section>
-          <section class="section">
-            <h2 id="sec7">7. Autres suggestions / commentaires</h2>
-            <textarea name="comments" rows="5"></textarea>
-          </section>
+        <div class="section">
+          <h2 id="sec4">4. Points forts observés</h2>
+          <p id="strengthsLabel">
+            Merci d’indiquer les éléments positifs qui vous ont marqué :
+          </p>
+          <textarea name="strengths" rows="6" required></textarea>
+        </div>
+        <div class="section">
+          <h2 id="sec5">5. Axes d’amélioration</h2>
+          <p id="improvementsLabel">
+            Quels sont les points à améliorer selon vous ?
+          </p>
+          <textarea name="improvements" rows="6" required></textarea>
+        </div>
+        <div class="section">
+          <h2 id="sec6">6. Priorités recommandées (facultatif - max 3)</h2>
+          <input
+            type="text"
+            name="priority1"
+            class="priority"
+            placeholder="1."
+          /><br />
+          <input
+            type="text"
+            name="priority2"
+            class="priority"
+            placeholder="2."
+          /><br />
+          <input
+            type="text"
+            name="priority3"
+            class="priority"
+            placeholder="3."
+          />
+        </div>
+        <div class="section">
+          <h2 id="sec7">7. Autres suggestions / commentaires</h2>
+          <textarea name="comments" rows="6"></textarea>
+        </div>
 
-          <button type="submit" id="submitBtn">Envoyer le questionnaire</button>
-        </form>
+        <button type="submit" class="submit-btn" id="submitBtn">
+          Envoyer le questionnaire
+        </button>
+      </form>
+    </div>
+
+    <!-- THANK YOU -->
+    <div id="thankYou">
+      <div class="thankyou-box">
+        <img
+          src="https://3dologie.com/wp-content/uploads/2024/07/WKW-Automotive-Logo.png"
+          alt="WKW"
+        />
+        <h2 id="thankTitle">Merci infiniment !</h2>
+        <p id="thankText">
+          La société <strong>WKW Automotive</strong> vous remercie
+          chaleureusement<br />pour le temps précieux consacré à ce
+          questionnaire.<br /><br />Votre avis est essentiel à notre
+          progression.
+        </p>
+        <button class="close-btn" onclick="location.reload()">Fermer</button>
       </div>
     </div>
 
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
     <script>
-      // YOUR SUPABASE KEYS (CHANGE THESE!)
       const SUPABASE_URL = "https://xodkwwxfpbgatkezbsiq.supabase.co";
       const SUPABASE_ANON_KEY =
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZGt3d3hmcGJnYXRrZXpic2lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMDYzMzgsImV4cCI6MjA3OTg4MjMzOH0.AdujtGpcHwcV-COPQbrkf-1g7eG6NrwAtOciaCPTJj0";
@@ -329,15 +651,14 @@
         SUPABASE_ANON_KEY
       );
 
-      // FULL TRANSLATIONS – 100% working
-      const texts = {
+      const translations = {
         fr: {
-          title: "Questionnaire de Satisfaction – Visite Qualité",
-          visitorLabel: "Visiteur :",
-          vpName: "Vice-Président Qualité Groupe",
-          dateLabel: "Date :",
+          title: "Questionnaire de Satisfaction – Visiteur interne Groupe",
+          lblFunction: "Fonction du visiteur",
+          lblSite: "Site visité",
+          lblDate: "Date de la visite",
           sec1: "1. Impression générale de la visite",
-          q1: "1. Comment évaluez-vous l'accueil et la préparation générale de la visite ?",
+          q1: "1. Comment évaluez-vous l’accueil et la préparation générale de la visite ?",
           a1: "Très satisfaisant",
           a2: "Satisfaisant",
           a3: "À améliorer",
@@ -347,13 +668,13 @@
           b2: "Partiellement",
           b3: "Peu",
           b4: "Pas du tout",
-          sec2: "2. Qualité du système et de l'organisation",
+          sec2: "2. Qualité du système et de l’organisation",
           q3: "3. Évaluation du niveau de maîtrise du système qualité :",
           c1: "Excellent",
           c2: "Bon",
           c3: "Moyen",
           c4: "À améliorer",
-          q4: "4. Clarté et disponibilité des indicateurs de performance :",
+          q4: "4. Clarté et disponibilité des indicateurs de performance (Production, Qualité, Maintenance, Logistique…) :",
           d1: "Très clair",
           d2: "Clair",
           d3: "Peu clair",
@@ -369,25 +690,31 @@
           f2: "Bon",
           f3: "Moyen",
           f4: "À améliorer",
-          q7: "7. Niveau de discipline qualité :",
+          q7: "7. Niveau de discipline qualité (standard work, traçabilité, audits, réaction aux défauts) :",
           g1: "Excellent",
           g2: "Bon",
           g3: "Moyen",
           g4: "À renforcer",
           sec4: "4. Points forts observés",
-          sec5: "5. Axes d'amélioration",
-          sec6: "6. Priorités recommandées (max 3)",
+          strengthsLabel:
+            "Merci d’indiquer les éléments positifs qui vous ont marqué :",
+          sec5: "5. Axes d’amélioration",
+          improvementsLabel: "Quels sont les points à améliorer selon vous ?",
+          sec6: "6. Priorités recommandées (facultatif - max 3)",
           sec7: "7. Autres suggestions / commentaires",
           submitBtn: "Envoyer le questionnaire",
           adminLink: "Admin Dashboard",
+          thankTitle: "Merci infiniment !",
+          thankText:
+            "La société <strong>WKW Automotive</strong> vous remercie chaleureusement<br>pour le temps précieux consacré à ce questionnaire.<br><br>Votre avis est essentiel à notre progression.",
         },
         en: {
-          title: "Quality Visit Satisfaction Survey",
-          visitorLabel: "Visitor:",
-          vpName: "Group Quality VP",
-          dateLabel: "Date:",
-          sec1: "1. General Impression",
-          q1: "1. How do you rate the reception and preparation?",
+          title: "Satisfaction Survey – Internal Group Visitor",
+          lblFunction: "Visitor's Role",
+          lblSite: "Visited Site",
+          lblDate: "Visit Date",
+          sec1: "1. General impression of the visit",
+          q1: "1. How do you rate the reception and general preparation of the visit?",
           a1: "Very satisfactory",
           a2: "Satisfactory",
           a3: "Needs improvement",
@@ -397,139 +724,208 @@
           b2: "Partially",
           b3: "Little",
           b4: "Not at all",
-          sec2: "2. Quality System & Organization",
-          q3: "3. Quality system mastery:",
+          sec2: "2. Quality system & organization",
+          q3: "3. Assessment of quality system mastery:",
           c1: "Excellent",
           c2: "Good",
           c3: "Average",
           c4: "Needs improvement",
-          q4: "4. Clarity of KPIs:",
+          q4: "4. Clarity and availability of performance indicators (Production, Quality, Maintenance, Logistics…):",
           d1: "Very clear",
           d2: "Clear",
           d3: "Somewhat clear",
           d4: "Not clear",
-          q5: "5. Lean/5S maturity:",
+          q5: "5. Maturity of Lean, 5S and continuous improvement approaches:",
           e1: "Very mature",
           e2: "Good",
           e3: "Average",
           e4: "Low",
-          sec3: "3. Shop Floor & Compliance",
-          q6: "6. Production line condition:",
+          sec3: "3. Processes, shop floor & compliance",
+          q6: "6. General condition of production lines and compliance level:",
           f1: "Very good",
           f2: "Good",
           f3: "Average",
           f4: "Needs improvement",
-          q7: "7. Quality discipline:",
+          q7: "7. Level of quality discipline (standard work, traceability, audits, defect reaction):",
           g1: "Excellent",
           g2: "Good",
           g3: "Average",
           g4: "Needs strengthening",
-          sec4: "4. Observed Strengths",
-          sec5: "5. Areas for Improvement",
-          sec6: "6. Recommended Priorities (max 3)",
-          sec7: "7. Other comments",
+          sec4: "4. Observed strengths",
+          strengthsLabel:
+            "Please indicate the positive aspects that impressed you:",
+          sec5: "5. Areas for improvement",
+          improvementsLabel: "What points need improvement in your opinion?",
+          sec6: "6. Recommended priorities (optional - max 3)",
+          sec7: "7. Other suggestions / comments",
           submitBtn: "Submit Survey",
           adminLink: "Admin Dashboard",
+          thankTitle: "Thank you very much!",
+          thankText:
+            "<strong>WKW Automotive</strong> sincerely thanks you<br>for the valuable time spent on this survey.<br><br>Your feedback is essential to our continuous improvement.",
         },
         de: {
-          title: "Zufriedenheitsumfrage – Qualitätsbesuch",
-          visitorLabel: "Besucher:",
-          vpName: "Gruppen-Qualitäts-VP",
-          dateLabel: "Datum:",
-          sec1: "1. Allgemeiner Eindruck",
-          q1: "1. Wie bewerten Sie Empfang und Vorbereitung?",
-          a1: "Sehr zufrieden",
-          a2: "Zufrieden",
+          title: "Zufriedenheitsumfrage – Interner Gruppenbesucher",
+          lblFunction: "Funktion des Besuchers",
+          lblSite: "Besuchter Standort",
+          lblDate: "Besuchsdatum",
+          sec1: "1. Allgemeiner Eindruck vom Besuch",
+          q1: "1. Wie bewerten Sie den Empfang und die allgemeine Vorbereitung des Besuchs?",
+          a1: "Sehr zufriedenstellend",
+          a2: "Zufriedenstellend",
           a3: "Verbesserungswürdig",
-          a4: "Unzufrieden",
+          a4: "Unzufriedenstellend",
           q2: "2. Hat der Besuch Ihren Erwartungen entsprochen?",
           b1: "Ja vollständig",
           b2: "Teilweise",
-          b3: "Wenig",
-          b4: "Gar nicht",
+          b3: "Kaum",
+          b4: "Überhaupt nicht",
           sec2: "2. Qualitätssystem & Organisation",
-          q3: "3. Beherrschung des QS:",
+          q3: "3. Bewertung der Beherrschung des Qualitätssystems:",
           c1: "Hervorragend",
           c2: "Gut",
           c3: "Durchschnittlich",
           c4: "Verbesserung nötig",
-          q4: "4. Klarheit der Kennzahlen:",
+          q4: "4. Klarheit und Verfügbarkeit der Leistungskennzahlen (Produktion, Qualität, Instandhaltung, Logistik…):",
           d1: "Sehr klar",
           d2: "Klar",
           d3: "Eher unklar",
           d4: "Unklar",
-          q5: "5. Reifegrad Lean/5S:",
+          q5: "5. Reifegrad der Lean-, 5S- und kontinuierlichen Verbesserungsansätze:",
           e1: "Sehr reif",
           e2: "Gut",
           e3: "Durchschnittlich",
           e4: "Gering",
-          sec3: "3. Shopfloor & Konformität",
-          q6: "6. Zustand der Linien:",
+          sec3: "3. Prozesse, Shopfloor & Konformität",
+          q6: "6. Allgemeiner Zustand der Produktionslinien und Konformitätsniveau:",
           f1: "Sehr gut",
           f2: "Gut",
           f3: "Durchschnittlich",
           f4: "Verbesserung nötig",
-          q7: "7. Qualitätsdisziplin:",
+          q7: "7. Qualitätsdisziplin (Standardarbeit, Rückverfolgbarkeit, Audits, Reaktion auf Defekte):",
           g1: "Hervorragend",
           g2: "Gut",
           g3: "Durchschnittlich",
           g4: "Zu stärken",
           sec4: "4. Beobachtete Stärken",
+          strengthsLabel:
+            "Bitte nennen Sie die positiven Punkte, die Sie beeindruckt haben:",
           sec5: "5. Verbesserungsbereiche",
-          sec6: "6. Prioritäten (max 3)",
-          sec7: "7. Weitere Kommentare",
-          submitBtn: "Fragebogen senden",
-          adminLink: "Admin-Dashboard",
+          improvementsLabel:
+            "Welche Punkte sollten Ihrer Meinung nach verbessert werden?",
+          sec6: "6. Empfohlene Prioritäten (optional - max. 3)",
+          sec7: "7. Weitere Vorschläge / Kommentare",
+          submitBtn: "Fragebogen absenden",
+          adminLink: "Admin Dashboard",
+          thankTitle: "Vielen Dank!",
+          thankText:
+            "Das Unternehmen <strong>WKW Automotive</strong> bedankt sich herzlich<br>für die wertvolle Zeit, die Sie für diesen Fragebogen aufgewendet haben.<br><br>Ihre Meinung ist uns sehr wichtig.",
         },
       };
 
-      // Change language
+      let currentLang = "fr";
+
+      function applyTranslation() {
+        const t = translations[currentLang];
+        document.getElementById("title").textContent = t.title;
+        document.getElementById("lblFunction").textContent = t.lblFunction;
+        document.getElementById("lblSite").textContent = t.lblSite;
+        document.getElementById("lblDate").textContent = t.lblDate;
+        document.getElementById("adminLink").textContent = t.adminLink;
+        document.getElementById("submitBtn").textContent = t.submitBtn;
+        document.getElementById("thankTitle").innerHTML = t.thankTitle;
+        document.getElementById("thankText").innerHTML = t.thankText;
+
+        // Toutes les questions
+        [
+          "sec1",
+          "sec2",
+          "sec3",
+          "sec4",
+          "sec5",
+          "sec6",
+          "sec7",
+          "q1",
+          "q2",
+          "q3",
+          "q4",
+          "q5",
+          "q6",
+          "q7",
+          "a1",
+          "a2",
+          "a3",
+          "a4",
+          "b1",
+          "b2",
+          "b3",
+          "b4",
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "d1",
+          "d2",
+          "d3",
+          "d4",
+          "e1",
+          "e2",
+          "e3",
+          "e4",
+          "f1",
+          "f2",
+          "f3",
+          "f4",
+          "g1",
+          "g2",
+          "g3",
+          "g4",
+          "strengthsLabel",
+          "improvementsLabel",
+        ].forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.textContent = t[id];
+        });
+      }
+
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          const lang = btn.dataset.lang;
-          Object.keys(texts[lang]).forEach((id) => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = texts[lang][id];
-          });
+          currentLang = btn.dataset.lang;
           document
             .querySelectorAll(".lang-btn")
             .forEach((b) => b.classList.remove("active"));
           btn.classList.add("active");
-          localStorage.setItem("lang", lang);
+          applyTranslation();
         });
       });
 
-      // Load saved language
-      const savedLang = localStorage.getItem("lang") || "fr";
-      document.querySelector(`[data-lang="${savedLang}"]`).click();
+      document.getElementById("sidebarToggle").addEventListener("click", () => {
+        document.getElementById("sidebar").classList.toggle("open");
+      });
 
-      // Today's date
       document.getElementById("visitDate").valueAsDate = new Date();
 
-      // Submit → Supabase (NO 405!)
       document
         .getElementById("surveyForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const data = Object.fromEntries(new FormData(e.target));
+          data.visitor = document.getElementById("visitorFunction").value;
+          data.site = document.getElementById("siteSelect").value;
           data.visit_date = document.getElementById("visitDate").value;
 
           const { error } = await supabase
             .from("survey_responses")
             .insert([data]);
-          if (error) {
-            alert("Erreur : " + error.message);
-          } else {
-            alert("Merci ! Réponse enregistrée.");
-            e.target.reset();
-            document.getElementById("visitDate").valueAsDate = new Date();
+          if (error) alert("Erreur : " + error.message);
+          else {
+            document.getElementById("formContainer").style.display = "none";
+            document.getElementById("thankYou").style.display = "flex";
+            applyTranslation();
           }
         });
 
-      // Sidebar toggle – 100% working
-      document.getElementById("sidebarToggle").addEventListener("click", () => {
-        document.getElementById("sidebar").classList.toggle("closed");
-      });
+      applyTranslation();
     </script>
   </body>
 </html>
