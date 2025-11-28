@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - WKW Quality</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body {
+        padding: 15px;
+        background: #f0f4f8;
+        font-family: "Roboto", sans-serif;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+      #loginScreen .card {
+        background: white;
+        padding: 50px 30px;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        max-width: 400px;
+        margin: 60px auto;
+        text-align: center;
+      }
+      #loginScreen input {
+        width: 100%;
+        padding: 16px;
+        margin: 12px 0;
+        border-radius: 12px;
+        border: 2px solid #e2e8f0;
+        font-size: 16px;
+      }
+      #loginScreen button {
+        width: 100%;
+        padding: 18px;
+        background: #1a4971;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 18px;
+        margin-top: 20px;
+        cursor: pointer;
+      }
+
+      .dashboard-header {
+        text-align: center;
+        margin: 40px 0;
+      }
+      .dashboard-header h1 {
+        color: #1a4971;
+        font-size: 32px;
+      }
+      .actions {
+        text-align: center;
+        margin: 30px 0;
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .btn {
+        padding: 14px 32px;
+        border: none;
+        border-radius: 50px;
+        font-weight: bold;
+        cursor: pointer;
+        min-width: 180px;
+      }
+      .btn-export {
+        background: #27ae60;
+        color: white;
+      }
+      .btn-logout {
+        background: #e74c3c;
+        color: white;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 25px;
+        margin: 40px 0;
+      }
+      .chart-card {
+        background: white;
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+      .chart-card h3 {
+        color: #1a4971;
+        margin-bottom: 15px;
+        font-size: 18px;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin: 30px 0;
+        border-radius: 16px;
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+      }
+      table {
+        width: 100%;
+        min-width: 1000px;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: white;
+        border-radius: 16px;
+      }
+      th {
+        background: #1a4971;
+        color: white;
+        padding: 16px;
+        text-align: center;
+      }
+      td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+      }
+      tr:hover {
+        background: #f0f7ff;
+      }
+
+      @media (max-width: 768px) {
+        .dashboard-header h1 {
+          font-size: 26px;
+        }
+        .actions {
+          flex-direction: column;
+          align-items: center;
+        }
+        .btn {
+          width: 90%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ÉCRAN DE CONNEXION -->
+    <div id="loginScreen">
+      <div class="card">
+        <h2 style="color: #1a4971">Connexion Admin</h2>
+        <input
+          type="email"
+          id="email"
+          value="admin@wkw-group.com"
+          placeholder="Email"
+        />
+        <input type="password" id="password" placeholder="Mot de passe" />
+        <!-- ON UTILISE addEventListener → PLUS D'ERREUR ! -->
+        <button id="loginBtn">Se connecter</button>
+        <p id="error" style="color: #e74c3c; margin-top: 15px; display: none">
+          Identifiants incorrects
+        </p>
+      </div>
+    </div>
+
+    <!-- TABLEAU DE BORD -->
+    <div id="dashboard" style="display: none">
+      <div class="dashboard-header">
+        <h1>Résultats Visites Qualité</h1>
+        <p><strong id="totalCount">0</strong> réponse(s) enregistrée(s)</p>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-export" onclick="exportToExcel()">
+          Exporter en Excel
+        </button>
+        <button class="btn btn-logout" onclick="logout()">Déconnexion</button>
+      </div>
+
+      <div class="charts-grid">
+        <div class="chart-card">
+          <h3>Q1 – Accueil & Préparation</h3>
+          <canvas id="chartQ1"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q2 – Attentes remplies</h3>
+          <canvas id="chartQ2"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q3 – Maîtrise système qualité</h3>
+          <canvas id="chartQ3"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q4 – Clarté des KPIs</h3>
+          <canvas id="chartQ4"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q5 – Maturité Lean/5S</h3>
+          <canvas id="chartQ5"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q6 – État des lignes</h3>
+          <canvas id="chartQ6"></canvas>
+        </div>
+        <div class="chart-card">
+          <h3>Q7 – Discipline qualité</h3>
+          <canvas id="chartQ7"></canvas>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div id="tableContainer">Chargement...</div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      const SUPABASE_URL = "https://xodkwwxfpbgatkezbsiq.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhvZGt3d3hmcGJnYXRrZXpic2lxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzMDYzMzgsImV4cCI6MjA3OTg4MjMzOH0.AdujtGpcHwcV-COPQbrkf-1g7eG6NrwAtOciaCPTJj0";
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      let allResponses = [];
+
+      const categories = {
+        positive: [
+          "Très satisfaisant",
+          "Oui totalement",
+          "Excellent",
+          "Très clair",
+          "Très mature",
+          "Très bon",
+        ],
+        good: ["Satisfaisant", "Partiellement", "Bon", "Clair", "Bonne"],
+        medium: ["Moyen", "Peu clair", "Moyenne", "Moyen"],
+        negative: [
+          "À améliorer",
+          "Insatisfaisant",
+          "Pas clair",
+          "Faible",
+          "À renforcer",
+          "Pas du tout",
+        ],
+      };
+
+      // ON ATTACHE LE BOUTON APRÈS LE CHARGEMENT
+      document.getElementById("loginBtn").addEventListener("click", login);
+
+      async function login() {
+        const { error } = await supabase.auth.signInWithPassword({
+          email: document.getElementById("email").value,
+          password: document.getElementById("password").value,
+        });
+        if (error) {
+          document.getElementById("error").style.display = "block";
+        } else {
+          document.getElementById("loginScreen").style.display = "none";
+          document.getElementById("dashboard").style.display = "block";
+          loadAllData();
+        }
+      }
+
+      async function loadAllData() {
+        const { data } = await supabase
+          .from("survey_responses")
+          .select("*")
+          .order("created_at", { ascending: false });
+        allResponses = data || [];
+        document.getElementById("totalCount").textContent = allResponses.length;
+        updateCharts();
+        updateTable(allResponses);
+      }
+
+      function countResponses(q) {
+        const counts = {
+          positive: 0,
+          good: 0,
+          medium: 0,
+          negative: 0,
+          total: allResponses.length,
+        };
+        allResponses.forEach((r) => {
+          const ans = r[q];
+          if (!ans) return;
+          if (categories.positive.some((v) => ans.includes(v)))
+            counts.positive++;
+          else if (categories.good.some((v) => ans.includes(v))) counts.good++;
+          else if (categories.medium.some((v) => ans.includes(v)))
+            counts.medium++;
+          else if (categories.negative.some((v) => ans.includes(v)))
+            counts.negative++;
+        });
+        return counts;
+      }
+
+      function updateCharts() {
+        const qs = ["q1", "q2", "q3", "q4", "q5", "q6", "q7"];
+        const colors = ["#27ae60", "#3498db", "#f39c12", "#e74c3c"];
+        const labels = ["Très bon", "Bon", "Moyen", "À améliorer"];
+
+        qs.forEach((q) => {
+          const c = countResponses(q);
+          const data = [c.positive, c.good, c.medium, c.negative];
+
+          new Chart(document.getElementById(`chart${q.toUpperCase()}`), {
+            type: "doughnut",
+            data: {
+              labels,
+              datasets: [
+                {
+                  data,
+                  backgroundColor: colors,
+                  borderWidth: 3,
+                  borderColor: "#fff",
+                },
+              ],
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { position: "bottom", labels: { padding: 20 } },
+                tooltip: {
+                  callbacks: {
+                    label: (ctx) =>
+                      `${ctx.label}: ${ctx.raw} (${Math.round(
+                        (ctx.raw / c.total) * 100
+                      )}%)`,
+                  },
+                },
+              },
+            },
+          });
+        });
+      }
+
+      function updateTable(data) {
+        let html = `<table>
+        <tr><th>Date</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th><th>Q5</th><th>Q6</th><th>Q7</th>
+            <th>Points forts</th><th>Améliorations</th><th>Priorités</th><th>Commentaires</th></tr>`;
+
+        data.forEach((r) => {
+          const prio =
+            [r.priority1, r.priority2, r.priority3]
+              .filter(Boolean)
+              .join(" → ") || "-";
+          html += `<tr>
+          <td><strong>${new Date(r.visit_date).toLocaleDateString(
+            "fr-FR"
+          )}</strong></td>
+          <td>${r.q1 || "-"}</td><td>${r.q2 || "-"}</td><td>${
+            r.q3 || "-"
+          }</td><td>${r.q4 || "-"}</td>
+          <td>${r.q5 || "-"}</td><td>${r.q6 || "-"}</td><td>${r.q7 || "-"}</td>
+          <td>${(r.strengths || "").substring(0, 50)}...</td>
+          <td>${(r.improvements || "").substring(0, 50)}...</td>
+          <td>${prio}</td><td>${r.comments || "-"}</td>
+        </tr>`;
+        });
+        document.getElementById("tableContainer").innerHTML = html + "</table>";
+      }
+
+      function exportToExcel() {
+        let csv =
+          "\uFEFFDate,Q1,Q2,Q3,Q4,Q5,Q6,Q7,Points forts,Améliorations,Priorité 1,Priorité 2,Priorité 3,Commentaires\n";
+        allResponses.forEach((r) => {
+          csv +=
+            [
+              new Date(r.visit_date).toLocaleDateString("fr-FR"),
+              r.q1 || "",
+              r.q2 || "",
+              r.q3 || "",
+              r.q4 || "",
+              r.q5 || "",
+              r.q6 || "",
+              r.q7 || "",
+              (r.strengths || "").replace(/"/g, '""'),
+              (r.improvements || "").replace(/"/g, '""'),
+              r.priority1 || "",
+              r.priority2 || "",
+              r.priority3 || "",
+              (r.comments || "").replace(/"/g, '""'),
+            ]
+              .map((v) => `"${v}"`)
+              .join(",") + "\n";
+        });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(
+          new Blob([csv], { type: "text/csv;charset=utf-8;" })
+        );
+        link.download = `WKW_Qualite_${new Date()
+          .toISOString()
+          .slice(0, 10)}.csv`;
+        link.click();
+      }
+
+      function logout() {
+        supabase.auth.signOut().then(() => location.reload());
+      }
+    </script>
+  </body>
+</html>
