@@ -26,7 +26,6 @@
         min-height: 100vh;
       }
 
-      /* LANGUAGE SWITCH */
       .lang-switch {
         position: fixed;
         top: 20px;
@@ -44,16 +43,13 @@
         font-weight: bold;
         cursor: pointer;
         transition: 0.3s;
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
       }
       .lang-btn.active,
       .lang-btn:hover {
         background: var(--primary);
         color: white;
-        transform: scale(1.05);
       }
 
-      /* SIDEBAR */
       #sidebarToggle {
         position: fixed;
         top: 20px;
@@ -77,7 +73,7 @@
         height: 100%;
         background: var(--primary);
         color: white;
-        transition: left 0.45s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        transition: left 0.45s ease;
         z-index: 9998;
         padding: 110px 35px 35px;
       }
@@ -99,11 +95,6 @@
         margin: 15px 0;
         font-size: 20px;
         background: rgba(255, 255, 255, 0.12);
-        transition: 0.3s;
-      }
-      #sidebar a:hover {
-        background: rgba(255, 255, 255, 0.25);
-        transform: translateX(10px);
       }
 
       .container {
@@ -113,7 +104,6 @@
         border-radius: 28px;
         padding: 60px;
         box-shadow: 0 30px 90px rgba(0, 0, 0, 0.18);
-        position: relative;
       }
       .wkw-logo {
         text-align: center;
@@ -194,7 +184,6 @@
         border-radius: 16px;
         font-size: 18px;
         margin-top: 15px;
-        font-family: inherit;
       }
       .priority {
         margin-bottom: 25px;
@@ -214,14 +203,11 @@
         font-weight: 900;
         cursor: pointer;
         box-shadow: 0 18px 50px rgba(0, 166, 81, 0.5);
-        transition: 0.4s;
       }
       .submit-btn:hover {
         transform: translateY(-10px);
-        box-shadow: 0 30px 70px rgba(0, 166, 81, 0.6);
       }
 
-      /* THANK YOU */
       #thankYou {
         display: none;
         position: fixed;
@@ -277,37 +263,19 @@
           opacity: 1;
         }
       }
-
-      @media (max-width: 768px) {
-        .container {
-          padding: 30px;
-          margin: 20px;
-        }
-        .header-info {
-          grid-template-columns: 1fr;
-        }
-        #sidebar {
-          width: 100%;
-          left: -100%;
-        }
-      }
     </style>
   </head>
   <body>
-    <!-- LANGUAGE SWITCH -->
     <div class="lang-switch">
       <button class="lang-btn active" data-lang="fr">FR</button>
       <button class="lang-btn" data-lang="en">EN</button>
       <button class="lang-btn" data-lang="de">DE</button>
     </div>
 
-    <!-- SIDEBAR -->
     <button id="sidebarToggle">Menu</button>
     <div id="sidebar">
       <div class="logo">WKW Quality</div>
-      <nav>
-        <a href="admin.html" id="adminLink">Admin Dashboard</a>
-      </nav>
+      <nav><a href="admin.html" id="adminLink">Admin Dashboard</a></nav>
       <div class="sidebar-footer">© 2025 WKW Automotive</div>
     </div>
 
@@ -329,25 +297,24 @@
           <input
             type="text"
             id="visitorFunction"
-            required
             placeholder="ex: VP Qualité Groupe"
           />
         </div>
         <div>
           <label id="lblSite">Site visité</label>
-          <select id="siteSelect" required>
+          <select id="siteSelect">
             <option value="WKWUT">WKWUT</option>
             <option value="WKWFR">WKWFR</option>
           </select>
         </div>
         <div>
           <label id="lblDate">Date de la visite</label>
-          <input type="date" id="visitDate" required />
+          <input type="date" id="visitDate" />
         </div>
       </div>
 
       <form id="surveyForm">
-        <!-- TOUTES LES QUESTIONS 100% COMPLÈTES -->
+        <!-- 1 -->
         <div class="section">
           <h2 id="sec1">1. Impression générale de la visite</h2>
           <div class="question">
@@ -357,28 +324,26 @@
             </p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q1"
-                  value="Très satisfaisant"
-                  required
-                /><span id="a1">Très satisfaisant</span></label
+                ><input type="radio" name="q1" value="Très satisfaisant" /><span
+                  data-tr="a1"
+                  >Très satisfaisant</span
+                ></label
               >
               <label
                 ><input type="radio" name="q1" value="Satisfaisant" /><span
-                  id="a2"
+                  data-tr="a2"
                   >Satisfaisant</span
                 ></label
               >
               <label
                 ><input type="radio" name="q1" value="À améliorer" /><span
-                  id="a3"
+                  data-tr="a3"
                   >À améliorer</span
                 ></label
               >
               <label
                 ><input type="radio" name="q1" value="Insatisfaisant" /><span
-                  id="a4"
+                  data-tr="a4"
                   >Insatisfaisant</span
                 ></label
               >
@@ -388,27 +353,25 @@
             <p id="q2">2. La visite a-t-elle répondu à vos attentes ?</p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q2"
-                  value="Oui totalement"
-                  required
-                /><span id="b1">Oui totalement</span></label
+                ><input type="radio" name="q2" value="Oui totalement" /><span
+                  data-tr="b1"
+                  >Oui totalement</span
+                ></label
               >
               <label
                 ><input type="radio" name="q2" value="Partiellement" /><span
-                  id="b2"
+                  data-tr="b2"
                   >Partiellement</span
                 ></label
               >
               <label
-                ><input type="radio" name="q2" value="Peu" /><span id="b3"
+                ><input type="radio" name="q2" value="Peu" /><span data-tr="b3"
                   >Peu</span
                 ></label
               >
               <label
                 ><input type="radio" name="q2" value="Pas du tout" /><span
-                  id="b4"
+                  data-tr="b4"
                   >Pas du tout</span
                 ></label
               >
@@ -416,6 +379,7 @@
           </div>
         </div>
 
+        <!-- 2 -->
         <div class="section">
           <h2 id="sec2">2. Qualité du système et de l’organisation</h2>
           <div class="question">
@@ -424,26 +388,25 @@
             </p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q3"
-                  value="Excellent"
-                  required
-                /><span id="c1">Excellent</span></label
+                ><input type="radio" name="q3" value="Excellent" /><span
+                  data-tr="c1"
+                  >Excellent</span
+                ></label
               >
               <label
-                ><input type="radio" name="q3" value="Bon" /><span id="c2"
+                ><input type="radio" name="q3" value="Bon" /><span data-tr="c2"
                   >Bon</span
                 ></label
               >
               <label
-                ><input type="radio" name="q3" value="Moyen" /><span id="c3"
+                ><input type="radio" name="q3" value="Moyen" /><span
+                  data-tr="c3"
                   >Moyen</span
                 ></label
               >
               <label
                 ><input type="radio" name="q3" value="À améliorer" /><span
-                  id="c4"
+                  data-tr="c4"
                   >À améliorer</span
                 ></label
               >
@@ -451,30 +414,30 @@
           </div>
           <div class="question">
             <p id="q4">
-              4. Clarté et disponibilité des indicateurs de performance
-              (Production, Qualité, Maintenance, Logistique…) :
+              4. Clarté et disponibilité des indicateurs de performance :
             </p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q4"
-                  value="Très clair"
-                  required
-                /><span id="d1">Très clair</span></label
+                ><input type="radio" name="q4" value="Très clair" /><span
+                  data-tr="d1"
+                  >Très clair</span
+                ></label
               >
               <label
-                ><input type="radio" name="q4" value="Clair" /><span id="d2"
+                ><input type="radio" name="q4" value="Clair" /><span
+                  data-tr="d2"
                   >Clair</span
                 ></label
               >
               <label
-                ><input type="radio" name="q4" value="Peu clair" /><span id="d3"
+                ><input type="radio" name="q4" value="Peu clair" /><span
+                  data-tr="d3"
                   >Peu clair</span
                 ></label
               >
               <label
-                ><input type="radio" name="q4" value="Pas clair" /><span id="d4"
+                ><input type="radio" name="q4" value="Pas clair" /><span
+                  data-tr="d4"
                   >Pas clair</span
                 ></label
               >
@@ -486,25 +449,26 @@
             </p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q5"
-                  value="Très mature"
-                  required
-                /><span id="e1">Très mature</span></label
+                ><input type="radio" name="q5" value="Très mature" /><span
+                  data-tr="e1"
+                  >Très mature</span
+                ></label
               >
               <label
-                ><input type="radio" name="q5" value="Bonne" /><span id="e2"
+                ><input type="radio" name="q5" value="Bonne" /><span
+                  data-tr="e2"
                   >Bonne</span
                 ></label
               >
               <label
-                ><input type="radio" name="q5" value="Moyenne" /><span id="e3"
+                ><input type="radio" name="q5" value="Moyenne" /><span
+                  data-tr="e3"
                   >Moyenne</span
                 ></label
               >
               <label
-                ><input type="radio" name="q5" value="Faible" /><span id="e4"
+                ><input type="radio" name="q5" value="Faible" /><span
+                  data-tr="e4"
                   >Faible</span
                 ></label
               >
@@ -512,6 +476,7 @@
           </div>
         </div>
 
+        <!-- 3 -->
         <div class="section">
           <h2 id="sec3">3. Processus, terrain & conformité</h2>
           <div class="question">
@@ -520,56 +485,53 @@
             </p>
             <div class="options">
               <label
-                ><input type="radio" name="q6" value="Très bon" required /><span
-                  id="f1"
+                ><input type="radio" name="q6" value="Très bon" /><span
+                  data-tr="f1"
                   >Très bon</span
                 ></label
               >
               <label
-                ><input type="radio" name="q6" value="Bon" /><span id="f2"
+                ><input type="radio" name="q6" value="Bon" /><span data-tr="f2"
                   >Bon</span
                 ></label
               >
               <label
-                ><input type="radio" name="q6" value="Moyen" /><span id="f3"
+                ><input type="radio" name="q6" value="Moyen" /><span
+                  data-tr="f3"
                   >Moyen</span
                 ></label
               >
               <label
                 ><input type="radio" name="q6" value="À améliorer" /><span
-                  id="f4"
+                  data-tr="f4"
                   >À améliorer</span
                 ></label
               >
             </div>
           </div>
           <div class="question">
-            <p id="q7">
-              7. Niveau de discipline qualité (standard work, traçabilité,
-              audits, réaction aux défauts) :
-            </p>
+            <p id="q7">7. Niveau de discipline qualité :</p>
             <div class="options">
               <label
-                ><input
-                  type="radio"
-                  name="q7"
-                  value="Excellent"
-                  required
-                /><span id="g1">Excellent</span></label
+                ><input type="radio" name="q7" value="Excellent" /><span
+                  data-tr="g1"
+                  >Excellent</span
+                ></label
               >
               <label
-                ><input type="radio" name="q7" value="Bon" /><span id="g2"
+                ><input type="radio" name="q7" value="Bon" /><span data-tr="g2"
                   >Bon</span
                 ></label
               >
               <label
-                ><input type="radio" name="q7" value="Moyen" /><span id="g3"
+                ><input type="radio" name="q7" value="Moyen" /><span
+                  data-tr="g3"
                   >Moyen</span
                 ></label
               >
               <label
                 ><input type="radio" name="q7" value="À renforcer" /><span
-                  id="g4"
+                  data-tr="g4"
                   >À renforcer</span
                 ></label
               >
@@ -579,20 +541,16 @@
 
         <div class="section">
           <h2 id="sec4">4. Points forts observés</h2>
-          <p id="strengthsLabel">
-            Merci d’indiquer les éléments positifs qui vous ont marqué :
-          </p>
-          <textarea name="strengths" rows="6" required></textarea>
+          <p id="strengthsLabel">Merci d’indiquer les éléments positifs...</p>
+          <textarea name="strengths" rows="6"></textarea>
         </div>
         <div class="section">
           <h2 id="sec5">5. Axes d’amélioration</h2>
-          <p id="improvementsLabel">
-            Quels sont les points à améliorer selon vous ?
-          </p>
-          <textarea name="improvements" rows="6" required></textarea>
+          <p id="improvementsLabel">Quels sont les points à améliorer...</p>
+          <textarea name="improvements" rows="6"></textarea>
         </div>
         <div class="section">
-          <h2 id="sec6">6. Priorités recommandées (facultatif - max 3)</h2>
+          <h2 id="sec6">6. Priorités recommandées (facultatif)</h2>
           <input
             type="text"
             name="priority1"
@@ -613,7 +571,7 @@
           />
         </div>
         <div class="section">
-          <h2 id="sec7">7. Autres suggestions / commentaires</h2>
+          <h2 id="sec7">7. Autres suggestions</h2>
           <textarea name="comments" rows="6"></textarea>
         </div>
 
@@ -623,7 +581,6 @@
       </form>
     </div>
 
-    <!-- THANK YOU -->
     <div id="thankYou">
       <div class="thankyou-box">
         <img
@@ -633,9 +590,7 @@
         <h2 id="thankTitle">Merci infiniment !</h2>
         <p id="thankText">
           La société <strong>WKW Automotive</strong> vous remercie
-          chaleureusement<br />pour le temps précieux consacré à ce
-          questionnaire.<br /><br />Votre avis est essentiel à notre
-          progression.
+          chaleureusement...
         </p>
         <button class="close-btn" onclick="location.reload()">Fermer</button>
       </div>
@@ -651,6 +606,7 @@
         SUPABASE_ANON_KEY
       );
 
+      // TRADUCTIONS COMPLÈTES (FR/EN/DE)
       const translations = {
         fr: {
           title: "Questionnaire de Satisfaction – Visiteur interne Groupe",
@@ -823,21 +779,16 @@
         },
       };
 
-      let currentLang = "fr";
-
+      // Fonction de traduction (maintenant 100% fonctionnelle)
       function applyTranslation() {
-        const t = translations[currentLang];
-        document.getElementById("title").textContent = t.title;
-        document.getElementById("lblFunction").textContent = t.lblFunction;
-        document.getElementById("lblSite").textContent = t.lblSite;
-        document.getElementById("lblDate").textContent = t.lblDate;
-        document.getElementById("adminLink").textContent = t.adminLink;
-        document.getElementById("submitBtn").textContent = t.submitBtn;
-        document.getElementById("thankTitle").innerHTML = t.thankTitle;
-        document.getElementById("thankText").innerHTML = t.thankText;
+        const t = translations[currentLang] || translations.fr;
 
-        // Toutes les questions
+        // Texte simple
         [
+          "title",
+          "lblFunction",
+          "lblSite",
+          "lblDate",
           "sec1",
           "sec2",
           "sec3",
@@ -852,42 +803,28 @@
           "q5",
           "q6",
           "q7",
-          "a1",
-          "a2",
-          "a3",
-          "a4",
-          "b1",
-          "b2",
-          "b3",
-          "b4",
-          "c1",
-          "c2",
-          "c3",
-          "c4",
-          "d1",
-          "d2",
-          "d3",
-          "d4",
-          "e1",
-          "e2",
-          "e3",
-          "e4",
-          "f1",
-          "f2",
-          "f3",
-          "f4",
-          "g1",
-          "g2",
-          "g3",
-          "g4",
           "strengthsLabel",
           "improvementsLabel",
+          "submitBtn",
+          "adminLink",
+          "thankTitle",
         ].forEach((id) => {
           const el = document.getElementById(id);
-          if (el) el.textContent = t[id];
+          if (el) el.textContent = t[id] || el.textContent;
         });
+
+        // Réponses radio (avec data-tr)
+        document.querySelectorAll("[data-tr]").forEach((span) => {
+          const key = span.dataset.tr;
+          span.textContent = t[key] || span.textContent;
+        });
+
+        // Merci
+        document.getElementById("thankText").innerHTML =
+          t.thankText || document.getElementById("thankText").innerHTML;
       }
 
+      let currentLang = "fr";
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
           currentLang = btn.dataset.lang;
@@ -899,20 +836,26 @@
         });
       });
 
+      // Sidebar
       document.getElementById("sidebarToggle").addEventListener("click", () => {
         document.getElementById("sidebar").classList.toggle("open");
       });
 
+      // Date du jour
       document.getElementById("visitDate").valueAsDate = new Date();
 
+      // Envoi
       document
         .getElementById("surveyForm")
         .addEventListener("submit", async (e) => {
           e.preventDefault();
           const data = Object.fromEntries(new FormData(e.target));
-          data.visitor = document.getElementById("visitorFunction").value;
-          data.site = document.getElementById("siteSelect").value;
-          data.visit_date = document.getElementById("visitDate").value;
+          data.visitor =
+            document.getElementById("visitorFunction").value || "Anonyme";
+          data.site = document.getElementById("siteSelect").value || "WKWUT";
+          data.visit_date =
+            document.getElementById("visitDate").value ||
+            new Date().toISOString().split("T")[0];
 
           const { error } = await supabase
             .from("survey_responses")
@@ -925,6 +868,7 @@
           }
         });
 
+      // Lancement
       applyTranslation();
     </script>
   </body>
